@@ -53,6 +53,7 @@ int DrawObject::GetMark()
 void DrawObject::ChangeColor(const Color4F & color)
 {
 	this->m_Color = color;
+	this->clear();
 	this->Render();
 }
 

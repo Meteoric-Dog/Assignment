@@ -8,6 +8,7 @@
 #include"base/CCEvent.h"
 #include"base/CCEventMouse.h"
 #include"base/CCEventListenerMouse.h"
+#include"SimpleAudioEngine.h"
 #include"DrawObject.h"
 #include"DrawRectangle.h"
 #include"DrawPlane.h"
@@ -15,8 +16,14 @@
 
 USING_NS_CC;
 using namespace std;
+using namespace CocosDenshion;
 
 #define DATA_FILE "SceneManager.txt"
+#define BACKGROUND_MUSIC "Chiru-Saisei-No-Uta.mp3"
+#define RECT_SOUND "sword_attack.wav"
+#define CIRCLE_SOUND "gun_shot.wav"
+#define EFFECT_VOLUME 8.0
+
 #define RECT_TYPE "RECT"
 #define CIRCLE_TYPE "CIRCLE"
 #define PLANE_TYPE "PLANE"
@@ -39,10 +46,11 @@ const auto CLICKED_PLANE_COLOR = Color4F::YELLOW;
 
 class MainScene :public Scene{
 public:
-	list<DrawObject> m_ObjectList;
+	list<DrawObject*> m_ObjectList;
 	DrawObject* m_ClickedObjectPointer;
 	int m_iObjectAmount;
 	EventListenerMouse *mouseListener;
+	Vec2 m_MousePreviousPosition;
 
 public:
 	virtual ~MainScene();

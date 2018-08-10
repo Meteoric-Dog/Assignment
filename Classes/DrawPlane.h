@@ -1,7 +1,7 @@
 #pragma once
 #include"DrawObject.h"
 
-#define PLANE_MARK 3;
+#define PLANE_MARK 3
 
 class DrawPlane :public DrawObject {
 public:

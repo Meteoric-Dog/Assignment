@@ -2,7 +2,8 @@
 
 MainScene::~MainScene()
 {
-	this->m_ObjectList.clear();
+	this->m_ObjectList.clear();                   //engine takes care of withdrawing memory
+	SimpleAudioEngine::getInstance()->end();
 }
 
 Scene * MainScene::s_CreateScene()
@@ -20,6 +21,13 @@ bool MainScene::init()
 	this->m_iObjectAmount = 0;
 	this->m_ClickedObjectPointer = NULL;
 	
+	auto audioEngine = SimpleAudioEngine::getInstance();
+	//audioEngine->preloadBackgroundMusic(BACKGROUND_MUSIC);
+	//audioEngine->playBackgroundMusic(BACKGROUND_MUSIC);
+	audioEngine->setEffectsVolume(EFFECT_VOLUME);
+	audioEngine->preloadEffect(RECT_SOUND);
+	audioEngine->preloadEffect(CIRCLE_SOUND);
+
 	this->mouseListener = EventListenerMouse::create();
 	this->mouseListener->onMouseDown = CC_CALLBACK_1(MainScene::onMouseDown, this);
 	this->mouseListener->onMouseMove = CC_CALLBACK_1(MainScene::onMouseMove, this);
@@ -39,7 +47,7 @@ void MainScene::draw(Renderer * renderer, const Mat4 & transform, uint32_t flags
 
 	if (!f.is_open()) {
 		f.close();
-		CCLOG("CAN NOT OPEN FILE");
+		//CCLOG("CAN NOT OPEN FILE");
 		return;
 	}
 	
@@ -52,7 +60,7 @@ void MainScene::draw(Renderer * renderer, const Mat4 & transform, uint32_t flags
 	//CCLOG(temp.c_str());
 	sscanf(temp.c_str(), AMOUNT_FORMAT, key, &amount);
 
-	sprintf(value0, "%d", amount);
+	//sprintf(value0, "%d", amount);
 	//CCLOG(value0);
 
 	if (amount > this->m_iObjectAmount) {
@@ -124,7 +132,7 @@ void MainScene::draw(Renderer * renderer, const Mat4 & transform, uint32_t flags
 
 			object->InitDisplay();
 			this->addChild(object);
-			this->m_ObjectList.push_back(*object);
+			this->m_ObjectList.push_back(object);
 			iter++;
 			if (f.peek() == EOF) {     //to avoid the case there is no empty line at the end
 				break;
@@ -144,26 +152,43 @@ void MainScene::draw(Renderer * renderer, const Mat4 & transform, uint32_t flags
 void MainScene::onMouseDown(Event * event)
 {
 	EventMouse *mouseEvent = (EventMouse*)event;	
-	char *value = new char[100];
-	sprintf(value, "%f ::: %f", mouseEvent->getLocationInView().x, mouseEvent->getLocationInView().y);
-	CCLOG(value);
-	for (list<DrawObject>::iterator iter = this->m_ObjectList.begin();
+	this->m_MousePreviousPosition = mouseEvent->getLocationInView();
+	for (list<DrawObject*>::iterator iter = this->m_ObjectList.begin();
 		iter != this->m_ObjectList.end(); ++iter) {
-		//if (iter->getBoundingBox().containsPoint(mouseEvent->getLocationInView())) {
-		//	this->m_ClickedObjectPointer = &*iter;
-		//	CCLOG("CLICKED");
-		//}
-		sprintf(value, "%d", iter->GetMark());
-		CCLOG(value);
+		if ((*iter)->getBoundingBox().containsPoint(mouseEvent->getLocationInView())) {
+			this->m_ClickedObjectPointer = *iter;
+			//CCLOG("CLICKED");
+		}
 	}
 	if (this->m_ClickedObjectPointer != NULL) {
-		this->m_ClickedObjectPointer->ChangeColor(Color4F::WHITE);
+		switch (this->m_ClickedObjectPointer->GetMark()) {
+		case RECT_MARK:
+			this->m_ClickedObjectPointer->ChangeColor(CLICKED_RECT_COLOR);
+			SimpleAudioEngine::getInstance()->playEffect(RECT_SOUND);
+			break;
+		case CIRCLE_MARK:
+			this->m_ClickedObjectPointer->ChangeColor(CLICKED_CIRCLE_COLOR);
+			SimpleAudioEngine::getInstance()->playEffect(CIRCLE_SOUND);
+			break;
+		case PLANE_MARK:
+			this->m_ClickedObjectPointer->ChangeColor(CLICKED_PLANE_COLOR);
+			break;
+		}
 	}
-	delete[]value;
 }
 
 void MainScene::onMouseMove(Event * event)
 {
+	if (this->m_ClickedObjectPointer != NULL) {
+		EventMouse* mouseEvent = (EventMouse*)event;
+
+		Vec2 currentPosition = mouseEvent->getLocationInView();
+		Vec2 newObjectPosition = this->m_ClickedObjectPointer->getPosition()
+			+ currentPosition - m_MousePreviousPosition;
+
+		this->m_ClickedObjectPointer->setPosition(newObjectPosition);
+		this->m_MousePreviousPosition = currentPosition;
+	}
 }
 
 void MainScene::onMouseScroll(Event * event)
@@ -172,6 +197,23 @@ void MainScene::onMouseScroll(Event * event)
 
 void MainScene::onMouseUp(Event * event)
 {
+	if (this->m_ClickedObjectPointer != NULL) {
+		switch (this->m_ClickedObjectPointer->GetMark()) {
+		case RECT_MARK:
+			this->m_ClickedObjectPointer->ChangeColor(RECT_COLOR);
+			SimpleAudioEngine::getInstance()->stopAllEffects();
+			break;
+		case CIRCLE_MARK:
+			this->m_ClickedObjectPointer->ChangeColor(CIRCLE_COLOR);
+			SimpleAudioEngine::getInstance()->stopAllEffects();
+			break;
+		case PLANE_MARK:
+			this->m_ClickedObjectPointer->ChangeColor(PLANE_COLOR);
+			break;
+		}
+	}
+	
+	this->m_ClickedObjectPointer = NULL;
 }
 
 
