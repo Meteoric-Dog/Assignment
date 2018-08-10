@@ -4,6 +4,8 @@
 
 USING_NS_CC;
 
+#define CIRCLE_MARK 2
+
 class DrawCircle :public DrawObject {
 public:
 	float m_fRadius, m_Angle;
@@ -15,6 +17,7 @@ public:
 	virtual void Render();
 	virtual void InitDisplay();
 	virtual void SetVelocity(Vec2 velocity);
+	virtual int GetMark();
 
 	CREATE_FUNC(DrawCircle);
 };

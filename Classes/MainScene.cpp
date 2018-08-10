@@ -18,6 +18,15 @@ bool MainScene::init()
 	}
 
 	this->m_iObjectAmount = 0;
+	this->m_ClickedObjectPointer = NULL;
+	
+	this->mouseListener = EventListenerMouse::create();
+	this->mouseListener->onMouseDown = CC_CALLBACK_1(MainScene::onMouseDown, this);
+	this->mouseListener->onMouseMove = CC_CALLBACK_1(MainScene::onMouseMove, this);
+	this->mouseListener->onMouseScroll = CC_CALLBACK_1(MainScene::onMouseScroll, this);
+	this->mouseListener->onMouseUp = CC_CALLBACK_1(MainScene::onMouseUp, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(this->mouseListener, this);
+
 	return true;
 }
 
@@ -117,7 +126,7 @@ void MainScene::draw(Renderer * renderer, const Mat4 & transform, uint32_t flags
 			this->addChild(object);
 			this->m_ObjectList.push_back(*object);
 			iter++;
-			if (f.peek() == EOF) {     //to avoid the case these are no empty line at the end
+			if (f.peek() == EOF) {     //to avoid the case there is no empty line at the end
 				break;
 			}
 			getline(f, temp);
@@ -130,6 +139,39 @@ void MainScene::draw(Renderer * renderer, const Mat4 & transform, uint32_t flags
 	delete[] value0;
 
 	f.close();
+}
+
+void MainScene::onMouseDown(Event * event)
+{
+	EventMouse *mouseEvent = (EventMouse*)event;	
+	char *value = new char[100];
+	sprintf(value, "%f ::: %f", mouseEvent->getLocationInView().x, mouseEvent->getLocationInView().y);
+	CCLOG(value);
+	for (list<DrawObject>::iterator iter = this->m_ObjectList.begin();
+		iter != this->m_ObjectList.end(); ++iter) {
+		//if (iter->getBoundingBox().containsPoint(mouseEvent->getLocationInView())) {
+		//	this->m_ClickedObjectPointer = &*iter;
+		//	CCLOG("CLICKED");
+		//}
+		sprintf(value, "%d", iter->GetMark());
+		CCLOG(value);
+	}
+	if (this->m_ClickedObjectPointer != NULL) {
+		this->m_ClickedObjectPointer->ChangeColor(Color4F::WHITE);
+	}
+	delete[]value;
+}
+
+void MainScene::onMouseMove(Event * event)
+{
+}
+
+void MainScene::onMouseScroll(Event * event)
+{
+}
+
+void MainScene::onMouseUp(Event * event)
+{
 }
 
 

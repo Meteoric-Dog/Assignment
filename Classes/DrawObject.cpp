@@ -45,7 +45,12 @@ void DrawObject::SetVelocity(Vec2 velocity)
 {
 }
 
-void DrawObject::ClickedRender(const Color4F & color)
+int DrawObject::GetMark()
+{
+	return OBJECT_MARK;
+}
+
+void DrawObject::ChangeColor(const Color4F & color)
 {
 	this->m_Color = color;
 	this->Render();

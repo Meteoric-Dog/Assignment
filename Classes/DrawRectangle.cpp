@@ -48,3 +48,8 @@ void DrawRectangle::SetVelocity(Vec2 velocity)
 	this->m_Velocity.y = velocity.y;
 }
 
+int DrawRectangle::GetMark()
+{
+	return RECT_MARK;
+}
+

@@ -5,6 +5,9 @@
 #include<fstream>
 #include<string>
 #include"cocos2d.h"
+#include"base/CCEvent.h"
+#include"base/CCEventMouse.h"
+#include"base/CCEventListenerMouse.h"
 #include"DrawObject.h"
 #include"DrawRectangle.h"
 #include"DrawPlane.h"
@@ -37,7 +40,9 @@ const auto CLICKED_PLANE_COLOR = Color4F::YELLOW;
 class MainScene :public Scene{
 public:
 	list<DrawObject> m_ObjectList;
+	DrawObject* m_ClickedObjectPointer;
 	int m_iObjectAmount;
+	EventListenerMouse *mouseListener;
 
 public:
 	virtual ~MainScene();
@@ -46,6 +51,11 @@ public:
 	static Scene* s_CreateScene();
 	virtual bool init();
 	virtual void draw(Renderer *renderer, const Mat4& transform, uint32_t flags);
+
+	void onMouseDown(Event* event);
+	void onMouseMove(Event* event);
+	void onMouseScroll(Event* event);
+	void onMouseUp(Event* event);
 
 	CREATE_FUNC(MainScene);
 };

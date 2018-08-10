@@ -24,6 +24,10 @@ void DrawCircle::Render()
 	Vec2 initialCenter(this->m_fRadius, this->m_fRadius);
 	this->drawCircle(initialCenter, this->m_fRadius, this->m_Angle, segment, false, this->m_Color);
 	this->setContentSize(Size(this->m_fRadius * 2, this->m_fRadius * 2));
+	//char *value = new char[100];
+	//sprintf(value, "%f %f", this->getBoundingBox().size.width, this->getBoundingBox().size.height);
+	//CCLOG(value);
+	//delete[] value;
 }
 
 void DrawCircle::InitDisplay()
@@ -40,4 +44,9 @@ void DrawCircle::SetVelocity(Vec2 velocity)
 {
 	this->m_Velocity.x = velocity.x;
 	this->m_Velocity.y = velocity.y;
+}
+
+int DrawCircle::GetMark()
+{
+	return CIRCLE_MARK;
 }

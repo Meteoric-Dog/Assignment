@@ -41,3 +41,8 @@ void DrawPlane::SetVelocity(Vec2 velocity)
 	this->m_Velocity.x = velocity.x;
 	this->m_Velocity.y = velocity.y;
 }
+
+int DrawPlane::GetMark()
+{
+	return PLANE_MARK;
+}

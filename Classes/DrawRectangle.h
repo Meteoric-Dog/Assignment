@@ -3,6 +3,8 @@
 
 USING_NS_CC;
 
+#define RECT_MARK 1
+
 class DrawRectangle :public DrawObject {
 public:
 	Size m_Size;
@@ -17,6 +19,7 @@ public:
 	virtual void Render();
 	virtual void InitDisplay();
 	virtual void SetVelocity(Vec2 velocity);
+	virtual int GetMark();
 
 	CREATE_FUNC(DrawRectangle);
 };

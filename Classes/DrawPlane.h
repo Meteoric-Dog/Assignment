@@ -1,6 +1,8 @@
 #pragma once
 #include"DrawObject.h"
 
+#define PLANE_MARK 3;
+
 class DrawPlane :public DrawObject {
 public:
 	Vec2 m_OtherPoint;
@@ -12,6 +14,7 @@ public:
 	virtual void Render();	
 	virtual void InitDisplay();
 	virtual void SetVelocity(Vec2 velocity);
+	virtual int GetMark();
 
 	CREATE_FUNC(DrawPlane);
 };

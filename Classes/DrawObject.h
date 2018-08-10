@@ -3,6 +3,8 @@
 
 USING_NS_CC;
 
+#define OBJECT_MARK 0
+
 class DrawObject :public DrawNode {
 public:
 	Vec2 m_InitialPosition;
@@ -19,7 +21,9 @@ public:
 	virtual void Render();
 	virtual void InitDisplay();
 	virtual void SetVelocity(Vec2 velocity);
-	void ClickedRender(const Color4F &color);
+	virtual int GetMark();
+
+	void ChangeColor(const Color4F &color);
 	void SetValues(Vec2 m_InitialPosition, float m_fMass, Vec2 m_Velocity, Color4F m_Color);
 
 	CREATE_FUNC(DrawObject);
