@@ -12,6 +12,8 @@ public:
 	float m_fMass;
 	Vec2 m_Velocity;
 	Color4F m_Color;
+	ParticleSystem *particle;
+	int m_iContactCount;
 
 public:
 	DrawObject();
@@ -19,13 +21,14 @@ public:
 
 public:
 	virtual bool init();
+	virtual int getTag();
+
 	virtual void Render();
 	virtual void InitPhysics();
 	virtual void InitDisplay();
 	virtual void SetVelocity(Vec2 velocity);
-	virtual int GetTag();
-	virtual void ShowCollisionEffect();
-	virtual void HideCollisionEffect();
+	virtual void startParticle();
+	virtual void stopParticle();
 
 	void ChangeColor(const Color4F &color);
 	void SetValues(Vec2 m_InitialPosition, float m_fMass, Vec2 m_Velocity, Color4F m_Color);

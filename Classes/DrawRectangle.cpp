@@ -43,6 +43,19 @@ void DrawRectangle::InitPhysics()
 	this->setPhysicsBody(physicsBody);
 }
 
+void DrawRectangle::InitParticle()
+{
+	this->particle = ParticleFlower::create();
+	this->particle->setSpeed(RECT_PARTICLE_SPEED);
+	this->particle->setEmitterMode(ParticleSystem::Mode::GRAVITY);
+	//this->particleFlower->setDuration(ParticleSystem::DURATION_INFINITY);
+	this->particle->setScale(RECT_PARTICLE_SCALE);
+	this->particle->setPosition(this->m_Size.width / 2, this->m_Size.height / 2);
+
+	this->addChild(this->particle);
+	this->stopParticle();
+}
+
 void DrawRectangle::InitDisplay()
 {
 	this->Render();
@@ -54,6 +67,7 @@ void DrawRectangle::InitDisplay()
 		this->m_InitialPosition.y + this->m_Size.height / 2);
 
 	this->InitPhysics();
+	this->InitParticle();
 }
 
 void DrawRectangle::SetVelocity(Vec2 velocity)
@@ -62,8 +76,18 @@ void DrawRectangle::SetVelocity(Vec2 velocity)
 	this->m_Velocity.y = velocity.y;
 }
 
-int DrawRectangle::GetTag()
+int DrawRectangle::getTag()
 {
 	return RECT_TAG;
+}
+
+void DrawRectangle::startParticle()
+{
+	this->particle->resetSystem();
+}
+
+void DrawRectangle::stopParticle()
+{
+	this->particle->stopSystem();
 }
 

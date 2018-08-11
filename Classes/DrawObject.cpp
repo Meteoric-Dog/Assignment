@@ -7,6 +7,7 @@ DrawObject::DrawObject()
 	m_fMass = 0;
 	this->m_Velocity = *(new Vec2(0, 0));
 	this->m_Color = Color4F::WHITE;
+	this->m_iContactCount = 0;
 }
 
 DrawObject::DrawObject(const DrawObject & object)
@@ -49,16 +50,16 @@ void DrawObject::SetVelocity(Vec2 velocity)
 {
 }
 
-int DrawObject::GetTag()
+int DrawObject::getTag()
 {
 	return OBJECT_TAG;
 }
 
-void DrawObject::ShowCollisionEffect()
+void DrawObject::startParticle()
 {
 }
 
-void DrawObject::HideCollisionEffect()
+void DrawObject::stopParticle()
 {
 }
 

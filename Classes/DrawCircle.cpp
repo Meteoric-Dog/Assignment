@@ -30,6 +30,17 @@ void DrawCircle::Render()
 	//delete[] value;
 }
 
+void DrawCircle::InitParticle()
+{
+	this->particle = ParticleExplosion::create();
+	this->particle->setPosition(this->m_fRadius, this->m_fRadius);
+	this->particle->setSpeed(CIRCLE_PARTICLE_SPEED);
+	this->particle->setScale(CIRCLE_PARTICLE_SCALE);
+
+	this->addChild(this->particle);
+	this->stopParticle();
+}
+
 void DrawCircle::InitPhysics()
 {
 	auto physicsBody = PhysicsBody::createCircle(this->m_fRadius, CIRCLE_MATERIAL);
@@ -51,6 +62,7 @@ void DrawCircle::InitDisplay()
 		this->m_InitialPosition.y + this->m_fRadius);
 
 	this->InitPhysics();
+	this->InitParticle();
 }
 
 void DrawCircle::SetVelocity(Vec2 velocity)
@@ -59,7 +71,17 @@ void DrawCircle::SetVelocity(Vec2 velocity)
 	this->m_Velocity.y = velocity.y;
 }
 
-int DrawCircle::GetTag()
+int DrawCircle::getTag()
 {
 	return CIRCLE_TAG;
+}
+
+void DrawCircle::startParticle()
+{
+	this->particle->resetSystem();
+}
+
+void DrawCircle::stopParticle()
+{
+	this->particle->stopSystem();
 }

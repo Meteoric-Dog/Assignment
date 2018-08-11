@@ -28,8 +28,11 @@ bool MainScene::init()
 	this->m_ClickedObjectPointer = NULL;
 	
 	auto audioEngine = SimpleAudioEngine::getInstance();
-	//audioEngine->preloadBackgroundMusic(BACKGROUND_MUSIC);
-	//audioEngine->playBackgroundMusic(BACKGROUND_MUSIC);
+
+	audioEngine->preloadBackgroundMusic(BACKGROUND_MUSIC);
+	audioEngine->setBackgroundMusicVolume(BACKGROUND_MUSIC_VOLUME);
+	audioEngine->playBackgroundMusic(BACKGROUND_MUSIC,true);
+
 	audioEngine->setEffectsVolume(EFFECT_VOLUME);
 	audioEngine->preloadEffect(RECT_SOUND);
 	audioEngine->preloadEffect(CIRCLE_SOUND);
@@ -41,10 +44,11 @@ bool MainScene::init()
 	this->mouseListener->onMouseUp = CC_CALLBACK_1(MainScene::onMouseUp, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(this->mouseListener, this);
 
-	auto edgeBox = Node::create();
 	auto physicsBody = PhysicsBody::createEdgeBox(visibleSize, SCENE_MATERIAL, SCENE_EDGE_WIDTH);
 	physicsBody->setCollisionBitmask(COLLISION_MASK);
 	physicsBody->setContactTestBitmask(COLLISION_MASK);
+
+	auto edgeBox = Node::create();
 	edgeBox->addComponent(physicsBody);
 	edgeBox->setTag(EDGE_TAG);
 	edgeBox->setPosition(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y);
@@ -54,6 +58,12 @@ bool MainScene::init()
 	contactListener->onContactBegin = CC_CALLBACK_1(MainScene::onContactBegin, this);
 	contactListener->onContactSeparate = CC_CALLBACK_1(MainScene::onContactSeparate, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
+
+	auto particleSnow = ParticleSnow::create();
+	particleSnow->setDuration(ParticleSystem::DURATION_INFINITY);
+	particleSnow->setEmitterMode(ParticleSystem::Mode::GRAVITY);
+	particleSnow->setSpeed(SNOW_SPEED);
+	this->addChild(particleSnow);
 
 	return true;
 }
@@ -182,17 +192,16 @@ void MainScene::onMouseDown(Event * event)
 	}
 
 	if (this->m_ClickedObjectPointer != NULL) {
-		switch (this->m_ClickedObjectPointer->GetTag()) {
+		switch (this->m_ClickedObjectPointer->getTag()) {
 		case RECT_TAG:
-			this->m_ClickedObjectPointer->ChangeColor(CLICKED_RECT_COLOR);
+			this->m_ClickedObjectPointer->startParticle();
 			SimpleAudioEngine::getInstance()->playEffect(RECT_SOUND);
 			break;
 		case CIRCLE_TAG:
-			this->m_ClickedObjectPointer->ChangeColor(CLICKED_CIRCLE_COLOR);
+			this->m_ClickedObjectPointer->startParticle();
 			SimpleAudioEngine::getInstance()->playEffect(CIRCLE_SOUND);
 			break;
 		case PLANE_TAG:
-			this->m_ClickedObjectPointer->ChangeColor(CLICKED_PLANE_COLOR);
 			break;
 		}
 
@@ -221,17 +230,16 @@ void MainScene::onMouseScroll(Event * event)
 void MainScene::onMouseUp(Event * event)
 {
 	if (this->m_ClickedObjectPointer != NULL) {
-		switch (this->m_ClickedObjectPointer->GetTag()) {
+		switch (this->m_ClickedObjectPointer->getTag()) {
 		case RECT_TAG:
-			this->m_ClickedObjectPointer->ChangeColor(RECT_COLOR);
+			this->m_ClickedObjectPointer->stopParticle();
 			SimpleAudioEngine::getInstance()->stopAllEffects();
 			break;
 		case CIRCLE_TAG:
-			this->m_ClickedObjectPointer->ChangeColor(CIRCLE_COLOR);
+			this->m_ClickedObjectPointer->stopParticle();
 			SimpleAudioEngine::getInstance()->stopAllEffects();
 			break;
 		case PLANE_TAG:
-			this->m_ClickedObjectPointer->ChangeColor(PLANE_COLOR);
 			break;
 		}
 
@@ -256,12 +264,18 @@ bool MainScene::onContactBegin(PhysicsContact & contact)
 
 		if (nodeA->getTag() != EDGE_TAG) {
 			DrawObject *objectA = (DrawObject*)nodeA;
-			objectA->ShowCollisionEffect();
+			objectA->m_iContactCount++;
+			if (objectA->m_iContactCount == 1) {
+				ChangeObjectColor(COLLIDED_TYPE, objectA);
+			}
 		}
 
 		if (nodeB->getTag() != EDGE_TAG) {
 			DrawObject *objectB = (DrawObject*)nodeB;
-			objectB->ShowCollisionEffect();
+			objectB->m_iContactCount++;
+			if (objectB->m_iContactCount == 1) {
+				ChangeObjectColor(COLLIDED_TYPE, objectB);
+			}
 		}
 
 		return true;
@@ -277,13 +291,44 @@ void MainScene::onContactSeparate(PhysicsContact & contact)
 	if (nodeA && nodeB) {
 		if (nodeA->getTag() != EDGE_TAG) {
 			DrawObject* objectA = (DrawObject*)nodeA;
-			objectA->HideCollisionEffect();
+			objectA->m_iContactCount--;
+			if (objectA->m_iContactCount == 0) {
+				ChangeObjectColor(NORMAL_TYPE, objectA);
+			}
 		}
 
 		if (nodeB->getTag() != EDGE_TAG) {
 			DrawObject* objectB = (DrawObject*)nodeB;
-			objectB->HideCollisionEffect();
+			objectB->m_iContactCount--;
+			if (objectB->m_iContactCount == 0) {
+				ChangeObjectColor(NORMAL_TYPE, objectB);
+			}
 		}
+	}
+}
+
+void MainScene::ChangeObjectColor(int type, DrawObject *object)
+{
+	switch (object->getTag()) {
+	case RECT_TAG:
+		if (type == NORMAL_TYPE) {
+			object->ChangeColor(RECT_COLOR);
+		}
+		else {
+			object->ChangeColor(COLLIDED_RECT_COLOR);
+		}
+		break;
+	case CIRCLE_TAG:
+		if (type == NORMAL_TYPE) {
+			object->ChangeColor(CIRCLE_COLOR);
+		}
+		else {
+			object->ChangeColor(COLLIDED_CIRCLE_COLOR);
+		}
+		break;
+	case PLANE_TAG:
+		//...
+		break;
 	}
 }
 

@@ -30,6 +30,7 @@ using namespace CocosDenshion;
 #define RECT_SOUND "sword_attack.wav"
 #define CIRCLE_SOUND "gun_shot.wav"
 #define EFFECT_VOLUME 8.0
+#define BACKGROUND_MUSIC_VOLUME 2.0
 
 #define RECT_TYPE "RECT"
 #define CIRCLE_TYPE "CIRCLE"
@@ -43,13 +44,17 @@ using namespace CocosDenshion;
 #define VELOCITY_FORMAT "%s %d"
 
 #define SCENE_INITIAL_MASS 0
+#define SNOW_SPEED 4.0
+
+#define NORMAL_TYPE 1
+#define COLLIDED_TYPE 2
 
 const auto RECT_COLOR = Color4F::BLUE;
-const auto CLICKED_RECT_COLOR = Color4F::MAGENTA;
+const auto COLLIDED_RECT_COLOR = Color4F::MAGENTA;
 const auto CIRCLE_COLOR = Color4F::RED;
-const auto CLICKED_CIRCLE_COLOR = Color4F::GREEN;
+const auto COLLIDED_CIRCLE_COLOR = Color4F::GREEN;
 const auto PLANE_COLOR = Color4F::GREEN;
-const auto CLICKED_PLANE_COLOR = Color4F::YELLOW;
+const auto COLLIDED_PLANE_COLOR = Color4F::YELLOW;
 
 class MainScene :public Scene{
 public:
@@ -66,6 +71,8 @@ public:
 	static Scene* s_CreateScene();
 	virtual bool init();
 	virtual void draw(Renderer *renderer, const Mat4& transform, uint32_t flags);
+	
+	void ChangeObjectColor(int type, DrawObject *object);
 
 	void onMouseDown(Event* event);
 	void onMouseMove(Event* event);
