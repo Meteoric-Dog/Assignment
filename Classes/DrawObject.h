@@ -19,6 +19,7 @@ public:
 public:
 	virtual bool init();
 	virtual void Render();
+	virtual void InitPhysics();
 	virtual void InitDisplay();
 	virtual void SetVelocity(Vec2 velocity);
 	virtual int GetMark();

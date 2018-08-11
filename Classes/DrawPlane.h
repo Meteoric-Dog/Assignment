@@ -2,6 +2,7 @@
 #include"DrawObject.h"
 
 #define PLANE_MARK 3
+#define PLANE_MATERIAL PhysicsMaterial(1.0, 1.0, 0.1)
 
 class DrawPlane :public DrawObject {
 public:

@@ -30,6 +30,14 @@ void DrawCircle::Render()
 	//delete[] value;
 }
 
+void DrawCircle::InitPhysics()
+{
+	auto physicsBody = PhysicsBody::createCircle(this->m_fRadius, CIRCLE_MATERIAL);
+	physicsBody->setGravityEnable(true);
+	physicsBody->setDynamic(true);	
+	this->setPhysicsBody(physicsBody);
+}
+
 void DrawCircle::InitDisplay()
 {
 	this->Render();
@@ -38,6 +46,8 @@ void DrawCircle::InitDisplay()
 	this->setAnchorPoint(anchorRoot);
 	this->ignoreAnchorPointForPosition(false);
 	this->setPosition(this->m_InitialPosition);
+
+	this->InitPhysics();
 }
 
 void DrawCircle::SetVelocity(Vec2 velocity)

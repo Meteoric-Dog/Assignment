@@ -37,6 +37,10 @@ void DrawObject::Render()
 {
 }
 
+void DrawObject::InitPhysics()
+{
+}
+
 void DrawObject::InitDisplay()
 {
 }

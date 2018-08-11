@@ -19,6 +19,9 @@ using namespace std;
 using namespace CocosDenshion;
 
 #define DATA_FILE "SceneManager.txt"
+#define SCENE_MATERIAL PhysicsMaterial(1.0, 0, 0.1)
+#define SCENE_EDGE_WIDTH 1.0
+
 #define BACKGROUND_MUSIC "Chiru-Saisei-No-Uta.mp3"
 #define RECT_SOUND "sword_attack.wav"
 #define CIRCLE_SOUND "gun_shot.wav"

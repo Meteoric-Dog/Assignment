@@ -13,10 +13,13 @@ Scene * MainScene::s_CreateScene()
 
 bool MainScene::init()
 {
-	if (!Scene::init())
+	if (!Scene::initWithPhysics())
 	{
 		return false;
 	}
+
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto origin = Director::getInstance()->getVisibleOrigin();
 
 	this->m_iObjectAmount = 0;
 	this->m_ClickedObjectPointer = NULL;
@@ -34,6 +37,12 @@ bool MainScene::init()
 	this->mouseListener->onMouseScroll = CC_CALLBACK_1(MainScene::onMouseScroll, this);
 	this->mouseListener->onMouseUp = CC_CALLBACK_1(MainScene::onMouseUp, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(this->mouseListener, this);
+
+	auto node = Node::create();
+	auto physicsBody = PhysicsBody::createEdgeBox(visibleSize, SCENE_MATERIAL, SCENE_EDGE_WIDTH);
+	node->addComponent(physicsBody);
+	node->setPosition(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y);
+	this->addChild(node);
 
 	return true;
 }

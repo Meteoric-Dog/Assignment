@@ -32,6 +32,15 @@ void DrawRectangle::Render()
 	this->setContentSize(this->m_Size);
 }
 
+void DrawRectangle::InitPhysics()
+{
+	auto physicsBody = PhysicsBody::createBox(this->m_Size, RECT_MATERIAL);
+	//physicsBody->setMass(this->m_fMass);
+	physicsBody->setGravityEnable(true);
+	physicsBody->setDynamic(true);
+	this->setPhysicsBody(physicsBody);
+}
+
 void DrawRectangle::InitDisplay()
 {
 	this->Render();
@@ -40,6 +49,8 @@ void DrawRectangle::InitDisplay()
 	this->setAnchorPoint(anchorRoot);
 	this->ignoreAnchorPointForPosition(false);
 	this->setPosition(this->m_InitialPosition);
+
+	this->InitPhysics();
 }
 
 void DrawRectangle::SetVelocity(Vec2 velocity)
