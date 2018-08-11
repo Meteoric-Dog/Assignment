@@ -2,6 +2,9 @@
 
 MainScene::~MainScene()
 {
+	for (list<DrawObject*>::iterator iter = this->m_ObjectList.begin(); iter != this->m_ObjectList.end(); ++iter) {
+		(*iter)->clear();
+	}
 	this->m_ObjectList.clear();                   //engine takes care of withdrawing memory
 	SimpleAudioEngine::getInstance()->end();
 }
@@ -38,11 +41,19 @@ bool MainScene::init()
 	this->mouseListener->onMouseUp = CC_CALLBACK_1(MainScene::onMouseUp, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(this->mouseListener, this);
 
-	auto node = Node::create();
+	auto edgeBox = Node::create();
 	auto physicsBody = PhysicsBody::createEdgeBox(visibleSize, SCENE_MATERIAL, SCENE_EDGE_WIDTH);
-	node->addComponent(physicsBody);
-	node->setPosition(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y);
-	this->addChild(node);
+	physicsBody->setCollisionBitmask(COLLISION_MASK);
+	physicsBody->setContactTestBitmask(COLLISION_MASK);
+	edgeBox->addComponent(physicsBody);
+	edgeBox->setTag(EDGE_TAG);
+	edgeBox->setPosition(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y);
+	this->addChild(edgeBox);
+
+	auto contactListener = EventListenerPhysicsContact::create();
+	contactListener->onContactBegin = CC_CALLBACK_1(MainScene::onContactBegin, this);
+	contactListener->onContactSeparate = CC_CALLBACK_1(MainScene::onContactSeparate, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
 
 	return true;
 }
@@ -147,7 +158,7 @@ void MainScene::draw(Renderer * renderer, const Mat4 & transform, uint32_t flags
 				break;
 			}
 			getline(f, temp);
-		}	
+		}
 
 		this->m_iObjectAmount = amount;
 	}
@@ -160,7 +171,7 @@ void MainScene::draw(Renderer * renderer, const Mat4 & transform, uint32_t flags
 
 void MainScene::onMouseDown(Event * event)
 {
-	EventMouse *mouseEvent = (EventMouse*)event;	
+	EventMouse *mouseEvent = (EventMouse*)event;
 	this->m_MousePreviousPosition = mouseEvent->getLocationInView();
 	for (list<DrawObject*>::iterator iter = this->m_ObjectList.begin();
 		iter != this->m_ObjectList.end(); ++iter) {
@@ -169,20 +180,23 @@ void MainScene::onMouseDown(Event * event)
 			//CCLOG("CLICKED");
 		}
 	}
+
 	if (this->m_ClickedObjectPointer != NULL) {
-		switch (this->m_ClickedObjectPointer->GetMark()) {
-		case RECT_MARK:
+		switch (this->m_ClickedObjectPointer->GetTag()) {
+		case RECT_TAG:
 			this->m_ClickedObjectPointer->ChangeColor(CLICKED_RECT_COLOR);
 			SimpleAudioEngine::getInstance()->playEffect(RECT_SOUND);
 			break;
-		case CIRCLE_MARK:
+		case CIRCLE_TAG:
 			this->m_ClickedObjectPointer->ChangeColor(CLICKED_CIRCLE_COLOR);
 			SimpleAudioEngine::getInstance()->playEffect(CIRCLE_SOUND);
 			break;
-		case PLANE_MARK:
+		case PLANE_TAG:
 			this->m_ClickedObjectPointer->ChangeColor(CLICKED_PLANE_COLOR);
 			break;
 		}
+
+		this->m_ClickedObjectPointer->getPhysicsBody()->setDynamic(false);
 	}
 }
 
@@ -207,22 +221,70 @@ void MainScene::onMouseScroll(Event * event)
 void MainScene::onMouseUp(Event * event)
 {
 	if (this->m_ClickedObjectPointer != NULL) {
-		switch (this->m_ClickedObjectPointer->GetMark()) {
-		case RECT_MARK:
+		switch (this->m_ClickedObjectPointer->GetTag()) {
+		case RECT_TAG:
 			this->m_ClickedObjectPointer->ChangeColor(RECT_COLOR);
 			SimpleAudioEngine::getInstance()->stopAllEffects();
 			break;
-		case CIRCLE_MARK:
+		case CIRCLE_TAG:
 			this->m_ClickedObjectPointer->ChangeColor(CIRCLE_COLOR);
 			SimpleAudioEngine::getInstance()->stopAllEffects();
 			break;
-		case PLANE_MARK:
+		case PLANE_TAG:
 			this->m_ClickedObjectPointer->ChangeColor(PLANE_COLOR);
 			break;
 		}
+
+		this->m_ClickedObjectPointer->getPhysicsBody()->setDynamic(true);
 	}
-	
+
 	this->m_ClickedObjectPointer = NULL;
+}
+
+bool MainScene::onContactBegin(PhysicsContact & contact)
+{
+	auto nodeA = contact.getShapeA()->getBody()->getNode();
+	auto nodeB = contact.getShapeB()->getBody()->getNode();
+
+	if (nodeA && nodeB) {
+		if (nodeA->getTag() == EDGE_TAG || nodeB->getTag() == EDGE_TAG) {
+			CCLOG(EDGE_COLLISION_ANNOUNCEMENT);
+		}
+		else {
+			CCLOG(OBJECT_COLLISION_ANNOUNCEMENT);
+		}
+
+		if (nodeA->getTag() != EDGE_TAG) {
+			DrawObject *objectA = (DrawObject*)nodeA;
+			objectA->ShowCollisionEffect();
+		}
+
+		if (nodeB->getTag() != EDGE_TAG) {
+			DrawObject *objectB = (DrawObject*)nodeB;
+			objectB->ShowCollisionEffect();
+		}
+
+		return true;
+	}
+	return false;
+}
+
+void MainScene::onContactSeparate(PhysicsContact & contact)
+{
+	auto nodeA = contact.getShapeA()->getBody()->getNode();
+	auto nodeB = contact.getShapeB()->getBody()->getNode();
+
+	if (nodeA && nodeB) {
+		if (nodeA->getTag() != EDGE_TAG) {
+			DrawObject* objectA = (DrawObject*)nodeA;
+			objectA->HideCollisionEffect();
+		}
+
+		if (nodeB->getTag() != EDGE_TAG) {
+			DrawObject* objectB = (DrawObject*)nodeB;
+			objectB->HideCollisionEffect();
+		}
+	}
 }
 
 

@@ -3,7 +3,8 @@
 
 USING_NS_CC;
 
-#define OBJECT_MARK 0
+#define OBJECT_TAG 100
+#define COLLISION_MASK 0x1001
 
 class DrawObject :public DrawNode {
 public:
@@ -22,7 +23,9 @@ public:
 	virtual void InitPhysics();
 	virtual void InitDisplay();
 	virtual void SetVelocity(Vec2 velocity);
-	virtual int GetMark();
+	virtual int GetTag();
+	virtual void ShowCollisionEffect();
+	virtual void HideCollisionEffect();
 
 	void ChangeColor(const Color4F &color);
 	void SetValues(Vec2 m_InitialPosition, float m_fMass, Vec2 m_Velocity, Color4F m_Color);

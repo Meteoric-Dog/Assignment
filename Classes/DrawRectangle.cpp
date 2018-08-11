@@ -38,6 +38,8 @@ void DrawRectangle::InitPhysics()
 	//physicsBody->setMass(this->m_fMass);
 	physicsBody->setGravityEnable(true);
 	physicsBody->setDynamic(true);
+	physicsBody->setCollisionBitmask(COLLISION_MASK);
+	physicsBody->setContactTestBitmask(COLLISION_MASK);
 	this->setPhysicsBody(physicsBody);
 }
 
@@ -45,10 +47,11 @@ void DrawRectangle::InitDisplay()
 {
 	this->Render();
 	
-	Vec2 anchorRoot(0, 0);
+	Vec2 anchorRoot(0.5, 0.5);
 	this->setAnchorPoint(anchorRoot);
 	this->ignoreAnchorPointForPosition(false);
-	this->setPosition(this->m_InitialPosition);
+	this->setPosition(this->m_InitialPosition.x + this->m_Size.width / 2, 
+		this->m_InitialPosition.y + this->m_Size.height / 2);
 
 	this->InitPhysics();
 }
@@ -59,8 +62,8 @@ void DrawRectangle::SetVelocity(Vec2 velocity)
 	this->m_Velocity.y = velocity.y;
 }
 
-int DrawRectangle::GetMark()
+int DrawRectangle::GetTag()
 {
-	return RECT_MARK;
+	return RECT_TAG;
 }
 

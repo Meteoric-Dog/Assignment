@@ -30,7 +30,7 @@ void DrawPlane::InitDisplay()
 {
 	this->Render();
 	
-	Vec2 anchorRoot(0, 0);
+	Vec2 anchorRoot(0.5, 0.5);
 	this->setAnchorPoint(anchorRoot);
 	this->ignoreAnchorPointForPosition(false);
 	this->setPosition(this->m_InitialPosition);
@@ -42,7 +42,7 @@ void DrawPlane::SetVelocity(Vec2 velocity)
 	this->m_Velocity.y = velocity.y;
 }
 
-int DrawPlane::GetMark()
+int DrawPlane::GetTag()
 {
-	return PLANE_MARK;
+	return PLANE_TAG;
 }

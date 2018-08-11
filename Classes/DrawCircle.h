@@ -4,7 +4,7 @@
 
 USING_NS_CC;
 
-#define CIRCLE_MARK 2
+#define CIRCLE_TAG 200
 #define CIRCLE_MATERIAL PhysicsMaterial(1.0, 1.0, 0.1)
 
 class DrawCircle :public DrawObject {
@@ -19,7 +19,7 @@ public:
 	virtual void InitPhysics();
 	virtual void InitDisplay();
 	virtual void SetVelocity(Vec2 velocity);
-	virtual int GetMark();
+	virtual int GetTag();
 
 	CREATE_FUNC(DrawCircle);
 };

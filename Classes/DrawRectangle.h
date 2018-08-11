@@ -3,7 +3,7 @@
 
 USING_NS_CC;
 
-#define RECT_MARK 1
+#define RECT_TAG 150
 #define RECT_MATERIAL PhysicsMaterial(1.0, 1.0, 0.1)
 
 class DrawRectangle :public DrawObject {
@@ -21,7 +21,7 @@ public:
 	virtual void InitPhysics();
 	virtual void InitDisplay();
 	virtual void SetVelocity(Vec2 velocity);
-	virtual int GetMark();
+	virtual int GetTag();
 
 	CREATE_FUNC(DrawRectangle);
 };

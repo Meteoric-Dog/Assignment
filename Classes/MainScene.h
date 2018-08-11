@@ -20,7 +20,11 @@ using namespace CocosDenshion;
 
 #define DATA_FILE "SceneManager.txt"
 #define SCENE_MATERIAL PhysicsMaterial(1.0, 0, 0.1)
-#define SCENE_EDGE_WIDTH 1.0
+#define SCENE_EDGE_WIDTH 3.0
+
+#define EDGE_TAG 50
+#define OBJECT_COLLISION_ANNOUNCEMENT "Object collision detected"
+#define EDGE_COLLISION_ANNOUNCEMENT "Edge collision detected"
 
 #define BACKGROUND_MUSIC "Chiru-Saisei-No-Uta.mp3"
 #define RECT_SOUND "sword_attack.wav"
@@ -67,6 +71,9 @@ public:
 	void onMouseMove(Event* event);
 	void onMouseScroll(Event* event);
 	void onMouseUp(Event* event);
+
+	bool onContactBegin(PhysicsContact &contact);
+	void onContactSeparate(PhysicsContact &contact);
 
 	CREATE_FUNC(MainScene);
 };

@@ -35,6 +35,8 @@ void DrawCircle::InitPhysics()
 	auto physicsBody = PhysicsBody::createCircle(this->m_fRadius, CIRCLE_MATERIAL);
 	physicsBody->setGravityEnable(true);
 	physicsBody->setDynamic(true);	
+	physicsBody->setCollisionBitmask(COLLISION_MASK);        
+	physicsBody->setContactTestBitmask(COLLISION_MASK);
 	this->setPhysicsBody(physicsBody);
 }
 
@@ -42,10 +44,11 @@ void DrawCircle::InitDisplay()
 {
 	this->Render();
 	
-	Vec2 anchorRoot(0, 0);
+	Vec2 anchorRoot(0.5, 0.5);
 	this->setAnchorPoint(anchorRoot);
 	this->ignoreAnchorPointForPosition(false);
-	this->setPosition(this->m_InitialPosition);
+	this->setPosition(this->m_InitialPosition.x + this->m_fRadius,
+		this->m_InitialPosition.y + this->m_fRadius);
 
 	this->InitPhysics();
 }
@@ -56,7 +59,7 @@ void DrawCircle::SetVelocity(Vec2 velocity)
 	this->m_Velocity.y = velocity.y;
 }
 
-int DrawCircle::GetMark()
+int DrawCircle::GetTag()
 {
-	return CIRCLE_MARK;
+	return CIRCLE_TAG;
 }

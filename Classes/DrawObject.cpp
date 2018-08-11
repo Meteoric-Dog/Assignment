@@ -49,9 +49,17 @@ void DrawObject::SetVelocity(Vec2 velocity)
 {
 }
 
-int DrawObject::GetMark()
+int DrawObject::GetTag()
 {
-	return OBJECT_MARK;
+	return OBJECT_TAG;
+}
+
+void DrawObject::ShowCollisionEffect()
+{
+}
+
+void DrawObject::HideCollisionEffect()
+{
 }
 
 void DrawObject::ChangeColor(const Color4F & color)
